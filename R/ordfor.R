@@ -1,7 +1,8 @@
 #' Ordinal forests
 #'
 #' Constructs prediction rules using the ordinal forest (OF) method presented in Hornung (2019). \cr
-#' The following tasks can be performed using OF: 1) Predicting the values of an ordinal target variable for new observations based on covariate values (see \code{\link{predict.ordfor}});
+#' The following tasks can be performed using OF: 1) Predicting the values of an ordinal target variable for new observations based on covariate values 
+#  (see \code{\link{predict.ordfor}});
 #' 2) Ranking the importances of the covariates with respect to predicting the values of the ordinal target variable. \cr
 #' The default values for the hyperparameters \code{nsets}, \code{ntreeperdiv}, \code{ntreefinal}, \code{npermtrial}, and \code{nbest}
 #' were found to be in a reasonable range in Hornung (2019) and it should not be necessary to alter these values in most situations. \cr
@@ -91,7 +92,8 @@
 #' \itemize{
 #'   \item \code{nsets} \verb{   } Default value: 1000. The default value of the number of considered score sets in the approximation of the optimal score set 
 #' is quite large. A large number of considered score sets is necessary to attain a high chance that some of the score sets are close enough to the optimal score set,
-#' that is, the score set that leads to the optimal OOB prediction performance with respect to the considered performance function (provided with the argument \code{perffunction}).
+#' that is, the score set that leads to the optimal OOB prediction performance with respect to the considered performance function 
+#  (provided with the argument \code{perffunction}).
 #' \item \code{ntreeperdiv} \verb{   } Default value: 100. A very small number of trees considered per tried
 #' score set might lead to a too strong variability in the assessments of the performances achieved for the individual score sets. For ultra-high dimensional
 #' covariate data it might be necessary to choose a higher value for \code{ntreeperdiv} than the default value 100.
@@ -116,7 +118,8 @@
 #' As noted above, the different score sets tried during the estimation of the optimal score set are assessed with respect to their OOB prediction performance.
 #' The choice of the specific performance function used in these assessments determines the specific kind of performance the ordinal forest should feature:
 #' \itemize{
-#' \item \code{perffunction="equal"} \verb{   } This choice should be made if it is of interest to classify observations from each class with the same accuracy independent of the class sizes. 
+#' \item \code{perffunction="equal"} \verb{   } This choice should be made if it is of interest to classify observations from each class with the same accuracy 
+#    independent of the class sizes. 
 #' Youden's J statistic is calculated with respect to each class ("observation/prediction in class j" vs. "observation/prediction NOT in class j" (j=1,...,J))
 #' and the simple average of the J results taken.
 #' \item \code{perffunction="proportional"} \verb{   } This choice should be made if the main goal is to classify
@@ -140,7 +143,8 @@
 #' An object of class "\code{ordfor}" is a list containing the following components: 
 #' \item{forestfinal}{ object of class \code{"ranger"}. Regression forest constructed using the optimized score set (i.e., the OF). Required by \code{\link{predict.ordfor}}.  }
 #' \item{bordersbest}{ vector of length J+1. Average over the \code{nbest} best partitions of [0,1]. Required by \code{\link{predict.ordfor}}. }
-#' \item{forests}{ list of length \code{nsets}. The regression forests constructed for the \code{nsets} different score sets tried prior to the approximation of the optimal score set. }
+#' \item{forests}{ list of length \code{nsets}. The regression forests constructed for the \code{nsets} different score sets tried prior to the approximation of the 
+#    optimal score set. }
 #' \item{perffunctionvalues}{ vector of length \code{nsets}. Performance function values for all score sets tried prior to the approximation of the optimal score set. }
 #' \item{bordersb}{ matrix of dimension \code{nsets} x (J+1). All \code{nsets} partitions of [0,1] considered. }
 #' \item{classes}{ character vector of length J. Classes of the target variable. }
@@ -151,7 +155,8 @@
 #' \item{classimp}{ character. If \code{perffunction="oneclass"}: class to priorize, NA else. }
 #' \item{nbest}{ integer. Number of best score sets used to approximate the optimal score set. }
 #' \item{classfreq}{ table. Class frequencies. }
-#' \item{varimp}{ vector of length p. Permutation variable importance for each covariate. Currently the misclassification error is used as error measure in the variable importance. }
+#' \item{varimp}{ vector of length p. Permutation variable importance for each covariate. Currently the misclassification error is used as error measure in the variable 
+#   importance. }
 #'
 #' @references
 #' Hornung R. (2019) Ordinal Forests. Journal of Classification, <\doi{10.1007/s00357-018-9302-x}>.
@@ -173,7 +178,9 @@
 #'
 #' @export
 ordfor <-
-  function(depvar, data, nsets=1000, ntreeperdiv=100, ntreefinal=5000, perffunction = c("equal", "proportional", "oneclass", "custom"), classimp, classweights, nbest=10, naive=FALSE, num.threads = NULL, npermtrial=500, permperdefault = FALSE, mtry = NULL, min.node.size = NULL, replace = TRUE, sample.fraction = ifelse(replace, 1, 0.632), always.split.variables = NULL, keep.inbag = FALSE) {
+  function(depvar, data, nsets=1000, ntreeperdiv=100, ntreefinal=5000, perffunction = c("equal", "proportional", "oneclass", "custom"),
+	   classimp, classweights, nbest=10, naive=FALSE, num.threads = NULL, npermtrial=500, permperdefault = FALSE, mtry = NULL,
+	   min.node.size = NULL, replace = TRUE, sample.fraction = ifelse(replace, 1, 0.632), always.split.variables = NULL, keep.inbag = FALSE) {
     
     if (is.null(num.threads)) {
       num.threads = 0
@@ -332,12 +339,14 @@ ordfor <-
      forestfinal <- rangerordfor(dependent.variable.name = "ymetric", data = datait, 
                                    num.trees = ntreefinal, importance="permutation", 
 								   num.threads=num.threads, borders=qnorm(bordersbest[-c(1,length(bordersbest))]), 
-								   mtry=mtry, min.node.size=min.node.size, replace=replace, sample.fraction=sample.fraction, always.split.variables=always.split.variables, 
+								   mtry=mtry, min.node.size=min.node.size, replace=replace, sample.fraction=sample.fraction, 
+				 always.split.variables=always.split.variables, 
 								   keep.inbag=keep.inbag)
     else
     forestfinal <- rangerordfor(dependent.variable.name = "ymetric", data = datait, 
                                    num.trees = ntreefinal, importance="permutation", num.threads=num.threads, borders=(2:J) - 0.5,
-								   mtry=mtry, min.node.size=min.node.size, replace=replace, sample.fraction=sample.fraction, always.split.variables=always.split.variables, 
+								   mtry=mtry, min.node.size=min.node.size, replace=replace, sample.fraction=sample.fraction, 
+				always.split.variables=always.split.variables, 
 								   keep.inbag=keep.inbag)
    
     # Ordinal classes of the target variable:
@@ -350,7 +359,8 @@ ordfor <-
     res <- list(forestfinal=forestfinal, bordersbest=bordersbest, forests=forests,
                 perffunctionvalues=perffunctionvalues, bordersb=bordersb, 
                 classes=classes, nsets=nsets, ntreeperdiv=ntreeperdiv, ntreefinal=ntreefinal, 
-                perffunction = perffunction, classimp=ifelse(!is.na(perffunction) & perffunction=="oneclass", classimp, NA), nbest=nbest, classfreq=classfreq, varimp=forestfinal$variable.importance)
+                perffunction = perffunction, classimp=ifelse(!is.na(perffunction) & perffunction=="oneclass", classimp, NA), nbest=nbest, 
+		classfreq=classfreq, varimp=forestfinal$variable.importance)
     class(res) <- "ordfor"
     
     # Output results:
